@@ -1,4 +1,4 @@
-const V='abismo-v10',F=['./','index.html','manifest.json','icon-192.png','icon-512.png','musica.mp3'];
+const V='abismo-v13',F=['./','index.html','manifest.json','icon-192.png','icon-512.png','musica.mp3'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>Promise.all(F.map(f=>c.add(f).catch(()=>{})))));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(n=>n!=V).map(n=>caches.delete(n)))));self.clients.claim()});
 self.addEventListener('fetch',e=>{if(e.request.method!='GET')return;
