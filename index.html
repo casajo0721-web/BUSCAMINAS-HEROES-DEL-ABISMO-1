@@ -107,8 +107,6 @@ body{background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--acc) 
 :root[data-theme="oro"] body{background:radial-gradient(ellipse at 50% 35%,#4a3a0c,#1a1405 75%) fixed}
 :root[data-theme="atardecer"] body{background:linear-gradient(#ff8a5c,#7a3d6e 45%,#2a1233) fixed}
 /* tablero 3D: una sola pantalla con la interfaz encima */
-#rot{display:none;position:fixed;inset:0;z-index:999;background:var(--bg);color:var(--tx);align-items:center;justify-content:center;text-align:center;font-size:22px;font-weight:700;padding:20px;line-height:1.6}
-@media (orientation:portrait) and (pointer:coarse) and (max-width:700px){#rot{display:flex}}
 #t3dg{position:fixed;inset:0;pointer-events:none;z-index:4;opacity:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(229,72,77,.75) 135%)}
 #app:has(>#grid.b3){position:fixed;inset:0;max-width:none;margin:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)!important;overflow:hidden;z-index:1}
 #grid.b3{position:absolute;inset:0;width:100%;height:100%;display:block;gap:0;touch-action:none}
@@ -186,8 +184,18 @@ body.hb #bg3d{display:block}
 @keyframes sph{0%,100%{opacity:.35}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){#bgfx::before,#bgfx::after,.hm-p,#sp i,.sp-b,.sp-h{animation:none}}
 :root[data-theme="oceano"] #bgfx::before{opacity:.45}
+/* 3D en vertical: datos arriba, botones abajo */
+@media (orientation:portrait){
+.u-top .hud{gap:6px;font-size:14px;padding:3px 6px}
+.u-top .top span{font-size:11px;padding:3px 6px}
+.u-left{left:calc(8px + env(safe-area-inset-left));right:calc(8px + env(safe-area-inset-right));top:calc(env(safe-area-inset-top) + 58px);width:auto;align-items:flex-start;max-height:calc(100% - 250px)}
+.u-right{left:calc(8px + env(safe-area-inset-left));right:calc(8px + env(safe-area-inset-right));top:auto;bottom:calc(8px + env(safe-area-inset-bottom));width:auto}
+.u-right .bar{grid-template-columns:repeat(5,1fr);gap:4px}
+.u-right .bar button{font-size:12px;padding:8px 2px}
+.b3b{left:auto;right:calc(8px + env(safe-area-inset-right));bottom:auto;top:calc(env(safe-area-inset-top) + 58px)}
+}
 </style></head>
-<body><div id=bgfx></div><div id=rot><div>📱↻<br>Gira tu teléfono<br><small style="font-weight:400;opacity:.7">Este juego se juega en horizontal</small></div></div><div id="app"></div><div id=yw><button onclick="ytStop()" title="Quitar">✕</button><div id=ytp></div></div>
+<body><div id=bgfx></div><div id="app"></div><div id=yw><button onclick="ytStop()" title="Quitar">✕</button><div id=ytp></div></div>
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onload="window.hbSet&&hbSet(!!document.querySelector('#app .hm'))"></script>
 <script>
 const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n);
@@ -870,7 +878,7 @@ function b3d(){
   g.style.setProperty('--ar',G.w/G.h);
   const bar=document.querySelector('.bar');
   if(G.inf){g.classList.remove('b3');if(T3.dg)T3.dg.style.opacity=0;return}
-  if(bar&&!bar.querySelector('.t3t'))bar.insertAdjacentHTML('afterbegin','<button class=t3t onclick="t3tog()">'+(D3?'▦ 2D':'🧊 3D')+'</button><button onclick="t3rot()" title="Horizontal">📱↔</button>');
+  if(bar&&!bar.querySelector('.t3t'))bar.insertAdjacentHTML('afterbegin','<button class=t3t onclick="t3tog()">'+(D3?'▦ 2D':'🧊 3D')+'</button>');
   if(!D3){g.classList.remove('b3');if(T3.dg)T3.dg.style.opacity=0;return}
   t3init();t3build(G.w,G.h);t3env();t3scene();t3hero();t3amb();
   if(!T3.dg){T3.dg=document.createElement('div');T3.dg.id='t3dg';document.body.appendChild(T3.dg)}
@@ -912,7 +920,6 @@ function t3rot(){
     const f=document.documentElement.requestFullscreen?document.documentElement.requestFullscreen():Promise.reject();
     f.then(()=>o.lock('landscape')).catch(()=>toast(msg))}catch(_){toast(msg)}
 }
-try{if(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches)addEventListener('pointerdown',()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(_){}},{once:true,passive:true})}catch(_){}
 {const _d=draw;draw=function(){_d.apply(this,arguments);try{b3d()}catch(e){console.error(e)}}}
 {const _s=setTh;setTh=function(id){const r=_s(id);try{b3d()}catch(_){}return r}}
 
