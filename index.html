@@ -77,7 +77,7 @@ input{font:inherit;color:var(--tx);background:var(--card);border:2px solid var(-
 :root[data-theme="oceano"]{--bg:#0a1c2e;--card:#12304d;--tx:#e3f3ff;--mut:#86aecb;--cell:#2c5a82;--open:#0f2a43;--acc:#3fb7ff}
 :root[data-theme="lava"]{--bg:#1c0d0a;--card:#33160f;--tx:#ffeee6;--mut:#c49a8a;--cell:#6b2e1e;--open:#2a120d;--acc:#ff5a1f}
 :root[data-theme="dulce"]{--bg:#ffe6f2;--card:#ffffff;--tx:#4a2040;--mut:#a0709a;--cell:#f5b3d6;--open:#fff3f9;--acc:#ff4fa3}
-:root[data-theme="hielo"]{--bg:#e8f4fb;--card:#ffffff;--tx:#1c3a4d;--mut:#6b8ea3;--cell:#b5d8ea;--open:#f4fbff;--acc:#2a9de0}
+:root[data-theme="hielo"]{--bg:#e8f4fb;--card:#ffffff;--tx:#1c3a4d;--mut:#6b8ea3;--cell:#7fb9dc;--open:#ffffff;--acc:#2a9de0}
 :root[data-theme="sombra"]{--bg:#000000;--card:#121212;--tx:#dddddd;--mut:#777777;--cell:#2a2a2a;--open:#0a0a0a;--acc:#b052ff}
 :root[data-theme="oro"]{--bg:#1a1405;--card:#2c2209;--tx:#fff4cf;--mut:#c2ad6b;--cell:#5c4a12;--open:#241c07;--acc:#f5b301}
 :root[data-theme="atardecer"]{--bg:#2a1233;--card:#43204f;--tx:#ffe9f3;--mut:#c79ac4;--cell:#7a3d6e;--open:#2e1536;--acc:#ff8a5c}
@@ -136,6 +136,8 @@ body{background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--acc) 
 }
 #cbw{position:relative;height:min(60vh,520px);margin-top:8px;border-radius:12px;background:var(--card);overflow:hidden;touch-action:none}
 #cbw canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#cbhelp{position:absolute;inset:0;z-index:5;display:none;overflow:auto;padding:14px;touch-action:pan-y;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(4px)}
+#cbhelp.on{display:block}#cbhelp h3{margin:0 0 8px;font-size:18px}#cbhelp p{margin:0 0 9px;font-size:14px;line-height:1.45}#cbhelp .go{margin-top:6px}
 
 /* ===== FONDOS ANIMADOS, MENÚ HORIZONTAL E INTRO ===== */
 #app{position:relative;z-index:1;transition:opacity .6s}
@@ -201,10 +203,10 @@ body.hb #bg3d{display:block}
 const $=s=>document.querySelector(s),rnd=n=>Math.floor(Math.random()*n);
 const RX={ok:[['🙂','Todo tranquilo…'],['😌','Vamos bien']],big:[['😄','¡Qué alivio!'],['🥳','¡Se abrió un montón!']],num:[['😰','Uy, hay minas cerca…'],['😬','Esto se pone tenso']],boom:[['😱','¡AAAH!'],['🤕','¡Eso dolió!']],shield:[['😮‍💨','¡Uf, por poco!']],flag:[['🧐','Aquí huele a mina…']],unflag:[['🤔','Mejor lo pienso…']],low:[['😨','¡Solo me queda una vida!']],streak:[['😎','¡Voy en racha!']],skill:[['✨','¡Mi habilidad!']],win:[['🥳','¡Lo logré!']],lose:[['😵','Esta vez no pudo ser…']]};
 const rxs=k=>{G.rx=RX[k][rnd(RX[k].length)]};
-const CH=[{id:'scout',n:'Exploradora',e:'🧭',a:'Radar',d:'Revela una casilla segura'},
+const CH=[{id:'scout',n:'Exploradora',e:'🧭',a:'Radar',d:'Despeja una zona segura 3x3 y marca las minas cercanas'},
 {id:'eng',n:'Ingeniero',e:'🛠️',a:'Escudo',d:'Desactiva la próxima mina que pises'},
-{id:'seer',n:'Vidente',e:'🔮',a:'Visión',d:'Marca las minas de un área 3x3'},{id:'hunt',n:'Cazador',e:'🏹',a:'Ráfaga',d:'Despeja una fila segura',cost:150},{id:'med',n:'Médico',e:'💚',a:'Cura',d:'Recupera 1 vida',cost:150},{id:'hack',n:'Hacker',e:'💾',a:'Hackeo',d:'Desactiva una mina',cost:200}];
-const LORE={scout:{h:'Lyra',a:'Faro de Lyra',s:'Guardabosques de Aurora. Su brújula, robada al Rey Sin Rostro, se enciende y revela un camino seguro en medio de la oscuridad.'},eng:{h:'Brann',a:'Escudo de Forja',s:'Herrero de las murallas. Levanta un escudo de acero ardiente que se traga la próxima explosión.'},seer:{h:'Nox',a:'Ojo de Nox',s:'Oráculo que ve mejor con los ojos cerrados. Siente dónde duermen las minas en un área cercana.'},hunt:{h:'Kael',a:'Lluvia de Kael',s:'Arquero del norte. Dispara una lluvia de flechas que despeja una fila entera del campo.'},med:{h:'Sol',a:'Luz Vital',s:'Sanadora del templo. Su luz cierra las heridas y te devuelve una vida.'},hack:{h:'Byte',a:'Código Cero',s:'Viajero del tiempo atrapado en la época medieval: por eso es un hacker entre espadas. Su reloj del futuro reescribe la runa de una mina y la apaga para siempre.'}};
+{id:'seer',n:'Vidente',e:'🔮',a:'Visión',d:'Marca las minas de un área 3x3'},{id:'hunt',n:'Cazador',e:'🏹',a:'Ráfaga',d:'Despeja una fila segura',cost:150},{id:'med',n:'Médico',e:'💚',a:'Cura',d:'Recupera 1 vida',cost:150},{id:'hack',n:'Hacker',e:'💾',a:'Hackeo',d:'Toca un punto: desactiva todas las minas del área 3x3 (+5 s)',cost:200}];
+const LORE={scout:{h:'Lyra',a:'Faro de Lyra',s:'Guardabosques de Aurora. Su brújula, robada al Rey Sin Rostro, se enciende y revela una zona entera sin peligro, señalando además las minas que la rodean.'},eng:{h:'Brann',a:'Escudo de Forja',s:'Herrero de las murallas. Levanta un escudo de acero ardiente que se traga la próxima explosión.'},seer:{h:'Nox',a:'Ojo de Nox',s:'Oráculo que ve mejor con los ojos cerrados. Siente dónde duermen las minas en un área cercana.'},hunt:{h:'Kael',a:'Lluvia de Kael',s:'Arquero del norte. Dispara una lluvia de flechas que despeja una fila entera del campo.'},med:{h:'Sol',a:'Luz Vital',s:'Sanadora del templo. Su luz cierra las heridas y te devuelve una vida.'},hack:{h:'Byte',a:'Código Cero',s:'Viajero del tiempo atrapado en la época medieval: por eso es un hacker entre espadas. Su reloj del futuro reescribe las runas de todas las minas de un área y las apaga para siempre, regalándote unos segundos extra.'}};
 CH.forEach(c=>{const l=LORE[c.id];c.a=l.a;c.n+=' '+l.h;c.s=l.s});
 const DF={'Fácil':{w:8,h:10,m:10,l:3},'Medio':{w:9,h:13,m:22,l:2},'Difícil':{w:10,h:15,m:40,l:1}};
 const COL=['','#2f7de1','#2e9e55','#e5484d','#7a4fd1','#c2410c','#0e9aa7','#444','#888'];
@@ -222,13 +224,15 @@ const k=G.mode=='hard'||G.mode=='plain'?0:Math.floor(G.rv/20);while(G.given<k){G
 function hit(c){G.cb=0;if(G.shield){fx('🛡️','#f5b301');G.shield=0;c.m=0;c.r=1;c.d=1;if(c.gm)G.sc+=100;calc();G.msg='🛡️ ¡Mina desactivada!'}else{fx('💥','#e5484d');c.r=1;c.x=1;G.lives--;G.msg='💥 -1 vida';if(G.lives<=0){G.over=-1;G.msg='💀 Perdiste'}}}
 function check(){if(G.over||G.inf)return;if(G.g.every(r=>r.every(c=>c.m||c.r))){G.over=1;G.msg='🎉 ¡Ganaste!'}}
 function open(x,y){const c=C(x,y);if(c.r)return;if(c.f){G.msg='🚩 Tiene bandera: mantén pulsado para quitarla';return}if(!G.first&&isIce(x,y)&&!c.ic&&G.mode!='plain'){c.ic=1;G.msg='🧊 Hielo roto, toca otra vez';sfx('flag');return}if(G.first){G.first=0;G.t0=Date.now();place(x,y)}(G.an=G.an||{})[x+','+y]=0;if(C(x,y).m){const s0=G.shield;hit(C(x,y));rxs(s0?'shield':G.lives==1&&G.lives<3?'low':'boom');tnt(s0?'shield':G.lives==1?'low':'boom')}else{G.cb++;G.mc=Math.max(G.mc||0,G.cb);const r0=G.rv;flood(x,y);sfx('open');const n=G.rv-r0;rxs(G.cb>=6?'streak':n>=10?'big':C(x,y).n>=3?'num':'ok');if(G.cb>=6)tnt('streak',.5);else tnt('open',.1)}check()}
+function zone(){const l=allCells().filter(a=>!a[2].r&&!a[2].m);if(!l.length)return 0;let best=-1,bs=[];l.forEach(a=>{const n=[[a[0],a[1]],...nb(a[0],a[1])].filter(p=>{const q=C(...p);return !q.r&&!q.m}).length;if(n>best){best=n;bs=[a]}else if(n==best)bs.push(a)});const [x,y]=bs[rnd(bs.length)];[[x,y],...nb(x,y)].forEach(p=>{const q=C(...p);if(!q.r&&!q.m)flood(p[0],p[1])});for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++){const X=x+i,Y=y+j;if(!G.inf&&(X<0||Y<0||X>=G.w||Y>=G.h))continue;const q=C(X,Y);if(q.m&&!q.r)q.f=1}check();return 1}
 function safe(){const l=allCells().filter(a=>!a[2].r&&!a[2].m).map(a=>[a[0],a[1]]);if(!l.length)return 0;const [x,y]=l[rnd(l.length)];flood(x,y);check();return 1}
 function act(x,y,long){if(G.over)return;G.msg='';const c=C(x,y);
+if(G.hk&&!G.first){let n=0;[[x,y],...nb(x,y)].forEach(p=>{const q=C(...p);if(q.m&&!q.r){q.m=0;q.r=1;q.d=1;q.f=0;G.sc+=q.gm?130:30;n++}});calc();[[x,y],...nb(x,y)].forEach(p=>{const q=C(...p);if(!q.r&&!q.m)flood(p[0],p[1])});G.hk=0;G.en=0;if(G.mode=='time'||G.mode=='car')G.tl+=5;fx('💾','#2ecc71');G.msg='💾 '+n+' mina'+(n==1?'':'s')+' hackeada'+(n==1?'':'s');check();draw();return}
 if(G.seer&&!G.first){[[x,y],...nb(x,y)].forEach(p=>{const q=C(...p);if(q.m&&!q.r)q.f=1});G.seer=0;G.en=0;fx('🔮','#9b5de5');G.msg='🔮 Minas reveladas';draw();return}
 if(!!G.flag!=!!long){if(!c.r){c.f^=1;rxs(c.f?'flag':'unflag');if(c.f)tnt('flag',.3);sfx('flag')}}else open(x,y);draw()}
 function ability(){if(G.over||G.first||G.en<G.need)return;G.msg='';rxs('skill');tnt('ab');const id=CH[S.ch].id;
-if(id=='scout'){if(safe()){G.en=0;fx('🧭','#22c1c3');G.msg='🧭 Casilla segura abierta'}}
-else if(id=='hack'){hack();G.en=0}else if(id=='hunt'){row();G.en=0}else if(id=='med'){G.lives++;G.en=0;fx('💚','#2ecc71');G.msg='💚 +1 vida'}else if(id=='eng'){if(!G.shield){G.shield=1;G.en=0;fx('🛡️','#f5b301');G.msg='🛡️ Escudo activo'}}
+if(id=='scout'){if(zone()){G.en=0;fx('🧭','#22c1c3');G.msg='🧭 Zona segura despejada'}}
+else if(id=='hack'){G.hk=!G.hk;if(G.hk)fx('💾','#2ecc71');G.msg=G.hk?'💾 Toca el centro del área a hackear':''}else if(id=='hunt'){row();G.en=0}else if(id=='med'){G.lives++;G.en=0;fx('💚','#2ecc71');G.msg='💚 +1 vida'}else if(id=='eng'){if(!G.shield){G.shield=1;G.en=0;fx('🛡️','#f5b301');G.msg='🛡️ Escudo activo'}}
 else{G.seer=!G.seer;if(G.seer)fx('🔮','#9b5de5');G.msg=G.seer?'🔮 Toca el centro del área':''}draw()}
 function useHint(){if(G.over||G.first||G.hint<1)return;if(safe()){G.hint--;G.msg='🔍 Pista usada';tnt('hint',.7)}draw()}
 function useDet(){if(G.over||G.first||G.det<1)return;const l=allCells().filter(a=>a[2].m&&!a[2].f).map(a=>a[2]);if(l.length){l[rnd(l.length)].f=1;G.det--;G.msg='📡 Mina marcada';tnt('det',.7)}draw()}
@@ -243,8 +247,8 @@ $('#app').innerHTML=`<div class=top style="display:flex;justify-content:space-be
 <div class=rx style="display:flex;align-items:center;gap:8px;justify-content:center;margin:2px 0">${pt(CH[S.ch].id,36)}<span style="background:var(--card);border-radius:14px;padding:6px 10px;font-size:14px">${(G.rx||['🤞','¡Vamos allá!']).join(' ')}</span>${G.ez?ezp(G.ez,36):''}</div>${G.et&&G.ez?'<div style="display:flex;justify-content:center;margin:2px 0 4px"><span style="background:#e5484d22;border:1px solid #e5484d;border-radius:14px;padding:6px 10px;font-size:13px;text-align:center">'+(G.ez[0]=='B'?['🗿','🕸️','👑'][+G.ez[1]]:CRE[G.ez].e)+' '+esc(G.et)+'</span></div>':''}<div class=msg>${G.msg||'&nbsp;'}</div>
 <div id=grid style="grid-template-columns:repeat(${G.w},1fr)">${cells}</div>
 <div class=bar><button class="${G.flag?'':'on'}" onclick="G.flag=0;draw()">👆 Abrir</button><button class="${G.flag?'on':''}" onclick="G.flag=1;draw()">🚩 Marcar</button><button class="${G.mode=='plain'?'hid':''}" onclick="useHint()">🔍 ${G.hint}</button><button class="${G.mode=='plain'?'hid':''}" onclick="useDet()">📡 ${G.det}</button>
-<button class="ab ${G.mode=='plain'?'hid':''} ${rdy?'rdy':''} ${G.seer?'on':''}" style="--p:${p}%" onclick="ability()">${ch.e} ${ch.a} ${rdy?'(¡lista!)':p+'%'}</button>
-${G.inf&&!G.over&&!G.first?'<button onclick="retire()" style="flex:2 1 100%">🏁 Cobrar puntos y terminar</button>':''}${G.over?(G.mode=='car'?(G.over==1?'<button class=go style="margin-top:4px" onclick="carNext()">Continuar ▶</button>':'<button class=go style="margin-top:4px" onclick="startLv()">↻ Reintentar</button><button onclick="map()" style="flex:2 1 100%">🗺️ Mi carrera</button>'):'<button class=go style="margin-top:4px" onclick="start()">Jugar otra vez</button>'):''}</div>
+<button class="ab ${G.mode=='plain'?'hid':''} ${rdy?'rdy':''} ${G.seer||G.hk?'on':''}" style="--p:${p}%" onclick="ability()">${ch.e} ${ch.a} ${rdy?'(¡lista!)':p+'%'}</button>
+${G.inf&&!G.over&&!G.first?'<button onclick="retire()" style="flex:2 1 100%">🏁 Cobrar puntos y terminar</button>':''}${G.over?(G.mode=='car'?(G.over==1?'<button class=go style="margin-top:4px" onclick="carNext()">Continuar ▶</button>':(K.v<=0?'<button class=go style="margin-top:4px" onclick="carOver()">💀 Fin de la aventura</button>':'<button class=go style="margin-top:4px" onclick="startLv()">↻ Reintentar · 💖 '+K.v+'</button><button onclick="map()" style="flex:2 1 100%">🗺️ Mi carrera</button>')):'<button class=go style="margin-top:4px" onclick="start()">Jugar otra vez</button>'):''}</div>
 <p class=hint>${rem()}🔍 revela casilla segura · 📡 marca una mina · cada 20 casillas ganas un premio</p>`;G.an={}}
 let P=null,T=null,F=0;const A=$('#app');
 A.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-x]');if(!b)return;P={x:+b.dataset.x,y:+b.dataset.y,sx:e.clientX,sy:e.clientY};F=0;try{A.setPointerCapture(e.pointerId)}catch(_){}T=setTimeout(()=>{F=1;const q=P;P=null;if(q)act(q.x,q.y,1)},350)});
@@ -253,7 +257,7 @@ A.addEventListener('pointercancel',()=>{clearTimeout(T);P=null});
 A.addEventListener('pointermove',e=>{if(!P||!G||!G.inf)return;const g=$('#grid');if(!g||!g.firstChild)return;const cs=g.firstChild.offsetWidth+3,dx=e.clientX-P.sx,dy=e.clientY-P.sy;if(Math.hypot(dx,dy)>10){clearTimeout(T);P.drag=1}if(P.drag){const mx=Math.trunc(dx/cs),my=Math.trunc(dy/cs);if(mx||my){G.cx-=mx;G.cy-=my;P.sx+=mx*cs;P.sy+=my*cs;draw()}}});
 A.addEventListener('contextmenu',e=>e.preventDefault());
 function fx(e,c){sfx({'#22c1c3':'scout','#f5b301':'eng','#9b5de5':'seer','#e5484d':'boom'}[c]);const d=document.createElement('div');d.className='fx';d.style.setProperty('--c',c);d.innerHTML='<i></i><i></i><b>'+e+'</b>';document.body.appendChild(d);setTimeout(()=>d.remove(),1000);try{navigator.vibrate&&navigator.vibrate(40)}catch(_){}}
-const TH=[['light','☀️ Claro','#f4f1ea','#e0562b','#cfc8b8'],['dark','🌙 Oscuro','#1a1b1f','#ff7a4d','#4a4e59'],['neon','⚡ Neón','#0b0b1a','#00f0ff','#2a2a5a'],['retro','📜 Retro','#c9b98a','#b5432a','#a8946a'],['bosque','🌲 Bosque','#14231a','#6fdc8c','#3d6b4d'],['oceano','🌊 Océano','#0a1c2e','#3fb7ff','#2c5a82'],['lava','🌋 Lava','#1c0d0a','#ff5a1f','#6b2e1e'],['dulce','🍬 Dulce','#ffe6f2','#ff4fa3','#f5b3d6'],['hielo','🧊 Hielo','#e8f4fb','#2a9de0','#b5d8ea'],['sombra','🕳️ Sombra','#000000','#b052ff','#2a2a2a'],['oro','👑 Oro','#1a1405','#f5b301','#5c4a12'],['atardecer','🌅 Atardecer','#2a1233','#ff8a5c','#7a3d6e']];
+const TH=[['light','☀️ Claro','#f4f1ea','#e0562b','#cfc8b8'],['dark','🌙 Oscuro','#1a1b1f','#ff7a4d','#4a4e59'],['neon','⚡ Neón','#0b0b1a','#00f0ff','#2a2a5a'],['retro','📜 Retro','#c9b98a','#b5432a','#a8946a'],['bosque','🌲 Bosque','#14231a','#6fdc8c','#3d6b4d'],['oceano','🌊 Océano','#0a1c2e','#3fb7ff','#2c5a82'],['lava','🌋 Lava','#1c0d0a','#ff5a1f','#6b2e1e'],['dulce','🍬 Dulce','#ffe6f2','#ff4fa3','#f5b3d6'],['hielo','🧊 Hielo','#e8f4fb','#2a9de0','#7fb9dc'],['sombra','🕳️ Sombra','#000000','#b052ff','#2a2a2a'],['oro','👑 Oro','#1a1405','#f5b301','#5c4a12'],['atardecer','🌅 Atardecer','#2a1233','#ff8a5c','#7a3d6e']];
 const curTh=()=>document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 function setTh(id){const t=TH.find(x=>x[0]==id)||TH[0];document.documentElement.dataset.theme=t[0];try{localStorage.setItem('th',t[0])}catch(_){}const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t[2];return t}
 function theme(){const i=TH.findIndex(t=>t[0]==curTh()),t=setTh(TH[(i+1)%TH.length][0]);toast('🎨 Tema: '+t[1])}
@@ -296,8 +300,8 @@ function tuto(){const s=(t,b)=>'<h2>'+t+'</h2><p>'+b+'</p>';$('#app').innerHTML=
 s('🎯 Objetivo','Abre todas las casillas que no tienen mina. Cada número indica cuántas minas hay en las 8 casillas de alrededor. Si abres una mina pierdes una vida, y cuando no te quedan vidas la partida termina. Tu primera casilla siempre es segura.')+
 s('👆 Controles','Toca una casilla para abrirla. Mantén pulsado para poner o quitar una bandera 🚩 donde creas que hay una mina. También puedes usar los botones 👆 Abrir y 🚩 Marcar de abajo para decidir qué hace un toque normal.')+
 s('🎮 Modos','🧩 Normal: buscaminas típico con 1 vida, sin habilidades ni ayudas (conserva 💎, minas doradas y monedas). 🎯 Clásico: el modo con héroes, habilidades, vidas y premios. ♾️ Infinito: tablero sin fin que mueves arrastrando el dedo, con 1 vida; usa 🏁 Cobrar para terminar con todos tus puntos, pero si pisas una mina pierdes la mitad. 💀 Hardcore: tablero difícil con 45 minas, 1 vida, sin ayudas y puntos x5. 📅 Del día: el mismo tablero para todos cada día. ⏱️ Contrarreloj: empiezas con 90 segundos y cada casilla que abres suma un poco de tiempo.')+
-s('🗡️ Modo Carrera','Tres jefes y niveles contra reloj. En cada nivel te enfrenta una criatura enviada por el jefe: 👺 Duende (menos tiempo), 💀 Esqueleto, 🪨 Golem (+1 vida, más minas), 👻 Espectro y 🦇 Murciélago (menos tiempo y menos minas). Después de cada nivel tomas una decisión: tus elecciones suman luz ☀️ o sombra 🌑, atraen aliados 🤝, dan ventajas para el siguiente nivel y cambian a los jefes y el final. El narrador solo lee la historia.')+
-s('🦸 Personajes','Elige uno en el menú. Su habilidad se carga al abrir casillas (barra de abajo) y se usa tocando el botón cuando está lista. 🧭 Exploradora: abre una casilla segura. 🛠️ Ingeniero: su escudo desactiva la próxima mina que pises. 🔮 Vidente: toca un punto y marca las minas del área 3x3. 🏹 Cazador: despeja una fila segura. 💚 Médico: recupera 1 vida. 💾 Hacker: desactiva una mina. Cazador, Médico y Hacker se compran con monedas 🪙.')+
+s('🗡️ Modo Carrera','Tres jefes y niveles contra reloj. En cada nivel te enfrenta una criatura enviada por el jefe: 👺 Duende (menos tiempo), 💀 Esqueleto, 🪨 Golem (+1 vida, más minas), 👻 Espectro y 🦇 Murciélago (menos tiempo y menos minas). Después de cada nivel tomas una decisión: tus elecciones suman luz ☀️ o sombra 🌑, atraen aliados 🤝, dan ventajas para el siguiente nivel y cambian a los jefes y el final. El narrador solo lee la historia. 💖 Vidas de aventura: empiezas con 7, 5 o 3 según la dificultad; fallar un nivel cuesta 1, superar 3 niveles da 1 y vencer a un jefe da 2 (máximo 9). Si llegan a 0, la aventura termina y empiezas la carrera de cero (conservas monedas y héroes).')+
+s('🦸 Personajes','Elige uno en el menú. Su habilidad se carga al abrir casillas (barra de abajo) y se usa tocando el botón cuando está lista. 🧭 Exploradora: despeja una zona segura de 3x3 y marca las minas cercanas. 🛠️ Ingeniero: su escudo desactiva la próxima mina que pises. 🔮 Vidente: toca un punto y marca las minas del área 3x3. 🏹 Cazador: despeja una fila segura. 💚 Médico: recupera 1 vida. 💾 Hacker: toca un punto y desactiva todas las minas del área 3x3 (+5 s en modos con tiempo). Cazador, Médico y Hacker se compran con monedas 🪙.')+
 s('🎁 Ayudas y premios','🔍 Pista: abre una casilla segura. 📡 Detector: marca una mina. Cada 20 casillas abiertas ganas un premio al azar (vida extra, pista o detector). En Normal y Hardcore no hay ayudas ni premios.')+
 s('✨ Casillas especiales','💎 Tesoro: aparece al abrir zonas vacías y da +40 puntos. 🪙 Mina dorada: no se distingue de las demás; si la desactivas da +100 puntos y una bandera bien puesta en ella vale +60.')+
 s('⭐ Puntos','Cada casilla da 10 puntos. Abrir casillas seguidas sin pisar minas sube el combo 🔥 y multiplica los puntos. Las banderas se cuentan al final: +20 si estaba en una mina y -10 si no. Al ganar hay bonus por tiempo y vidas. Todo se multiplica por la dificultad (x1, x2, x3). Si pierdes, tus puntos se reducen a la mitad.')+
@@ -321,7 +325,7 @@ i:'«Otro héroe más, {n}. Mil años y sigo sin rostro porque nadie ha sobreviv
 m:['Cruza el Campo Infinito','Reaviva los faros apagados','Descifra las runas del Rey','Escapa del Abismo que se reacomoda','Libera a los héroes cautivos','Rompe los sellos del Trono','Resiste el eco del Rey'],
 d:'«¡El Abismo es mío, {n}!» El campo entero se reacomoda a tu alrededor.',
 o:'El Rey Sin Rostro se quiebra y su máscara cae al suelo: no hay nadie detrás. El Abismo se detiene, conteniendo el aliento, y la Corona Rota queda sola entre las minas.'}];
-const HI={scout:'La brújula late en tu mano y señala un único camino seguro.',eng:'El escudo de Brann pesa como una promesa: hoy lo llevas hasta las murallas.',seer:'Nox te susurra con los ojos cerrados: «Las minas ya te están hablando».',hunt:'La cuerda del arco de Kael vibra: el campo de minas se extiende ante ti.',med:'La luz de Sol calienta tus manos: nadie quedará atrás mientras la lleves.',hack:'El reloj del futuro de Byte parpadea en tu muñeca: un viajero del tiempo te presta su tecnología en plena época medieval.'};
+const HI={scout:'La brújula late en tu mano y señala una zona entera sin peligro.',eng:'El escudo de Brann pesa como una promesa: hoy lo llevas hasta las murallas.',seer:'Nox te susurra con los ojos cerrados: «Las minas ya te están hablando».',hunt:'La cuerda del arco de Kael vibra: el campo de minas se extiende ante ti.',med:'La luz de Sol calienta tus manos: nadie quedará atrás mientras la lleves.',hack:'El reloj del futuro de Byte parpadea en tu muñeca: un viajero del tiempo te presta su tecnología en plena época medieval.'};
 let K={},NM='';try{K=JSON.parse(localStorage.getItem('car'))||{}}catch(_){}
 const ks=()=>{try{localStorage.setItem('car',JSON.stringify(K))}catch(_){}};
 const TN={
@@ -341,12 +345,12 @@ lose:['JAJAJA, ¡eres un inútil!','Te dije que ibas a perder, estúpido.','Vete
 const TC={d:['Te voy a robar hasta los calcetines, tonto.','¡Jejeje, tarado, tarado!','Hueles a pedos desde aquí, héroe.'],e:['Mis huesos han visto peores que tú, mocoso.','Ven acá, inútil, que te desarmo.','Ni vivo eras bueno, ¿verdad?'],g:['Roca aplasta tontos como tú.','Ni un golpe sabes esquivar, enano inepto.','Tu mamá te parió a pedos, lo oigo desde aquí.'],s:['Tu miedo huele delicioso, cobarde.','Voy a susurrarte hasta que enloquezcas, idiota.','Hasta los muertos tenemos más IQ que tú.'],m:['¡Chillo más fuerte que tú, rata!','Voy a morderte el orgullo, tarado.','Qué ratón de biblioteca tan inútil eres.'],B0:['Soy una muralla, no pasas, escuincle inepto.','¡Mi martillo te va a aplastar, tonto!','Te parieron un martes por la tarde, héroe de feria.'],B1:['Mis raíces te van a atrapar, idiota.','Vas a ser abono, inútil.','Huele a pedos tu valentía, intruso.'],B2:['Sin rostro y aun así veo tu cara de tonto.','Soy el Abismo. ¿Tú qué eres? Un deudor de IQ.','Tu mamá te parió a pedos y aun así llegaste hasta aquí, qué lástima.']};
 function tnt(k,p){if(!G||G.mode!='car'||!G.ez)return;if(p!=null&&Math.random()>p)return;const a=(TN[k]||[]).concat(Math.random()<.5?(TC[G.ez]||[]):[]);if(a.length)G.et=a[rnd(a.length)]}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
-function kn(){K.f=K.f||{};K.al=K.al||[];K.lz=K.lz||0;K.sn=K.sn||{};K.nx=K.nx||{};K.bx=K.bx||{}}
+function kn(){K.f=K.f||{};K.al=K.al||[];K.lz=K.lz||0;K.sn=K.sn||{};K.nx=K.nx||{};K.bx=K.bx||{};if(K.v==null)K.v=5}
 if(K.on)kn();
 const lzbar=()=>{if(!K||!K.on)return'';kn();const z=K.lz,p=Math.max(0,Math.min(100,50+z*8)),lab=z>=3?'☀️ Luz':z<=-3?'🌑 Oscuridad':'⚖️ Equilibrio';return '<div style="margin:10px 0 4px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mut)"><span>🌑 Oscuridad</span><b style="color:var(--tx)">'+lab+' ('+(z>0?'+':'')+z+')</b><span>Luz ☀️</span></div><div style="position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,#120a1f,#5b3aa6 50%,#f5b301);overflow:hidden;border:1px solid var(--mut)"><div style="position:absolute;top:0;bottom:0;left:calc('+p+'% - 3px);width:6px;background:#fff;box-shadow:0 0 8px #fff;border-radius:3px"></div></div></div>'};
 const tx=()=>{const t=$('.tt');if(!t)return'';const c=t.cloneNode(true);c.querySelectorAll('.ns').forEach(e=>e.remove());c.querySelectorAll('br').forEach(b=>b.replaceWith('. '));c.querySelectorAll('h2').forEach(e=>e.append('. '));c.querySelectorAll('p,h2').forEach(e=>e.append(' '));return c.textContent};
 function sc(h,ps,btn,fn,im){$('#app').innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><button onclick="menu()">← Menú</button><span><button id=bv onclick="vz()">🗣️</button> <button id=bm onclick="mz()">🎵</button></span></div><h1>'+h+'</h1>'+(im?'<div style="display:flex;justify-content:center;margin:6px 0 10px">'+im+'</div>':'')+'<div class=tt>'+ps.filter(Boolean).map(p=>p[0]=='~'?'<p class=ns>'+p.slice(1)+'</p>':'<p>'+p+'</p>').join('')+'</div>'+lzbar()+'<button onclick="rd()" style="margin-top:4px">🔊 Escuchar</button>'+(btn?'<button class=go onclick="'+fn+'">'+btn+'</button>':'');tgs();say(tx())}
-function career(){if(K.on)return map();const un=meta().un;$('#app').innerHTML=`<button onclick="menu()" style="margin-bottom:8px">← Volver</button><h1>🗡️ Modo Carrera</h1><p class=hint style="text-align:left">Tres jefes, 45 niveles contra reloj que suben de dificultad: 10, 15 y 20 niveles. Enfrenta a las criaturas de cada jefe y toma decisiones que cambian la historia.</p><h2>Tu nombre</h2><input id=nm maxlength=14 placeholder="Escribe tu nombre" value="${esc(NM)}" oninput="NM=this.value"><h2>Tu habilidad</h2><div class=row>${CH.map((c,i)=>`<button class="card ${i==S.ch?'on':''}" ${un.includes(i)?`onclick="S.ch=${i};career()"`:'disabled style="opacity:.4"'}>${pt(c.id,64)}<span>${c.a}</span><small>${c.d}</small></button>`).join('')}</div><h2>Dificultad</h2><div class=row>${Object.keys(DF).map(k=>`<button class="${k==S.df?'on':''}" onclick="S.df='${k}';career()">${k}</button>`).join('')}</div><button class=go onclick="cnew()">Comenzar aventura</button>`}
+function career(){if(K.on)return K.dead?carOver():map();const un=meta().un;$('#app').innerHTML=`<button onclick="menu()" style="margin-bottom:8px">← Volver</button><h1>🗡️ Modo Carrera</h1><p class=hint style="text-align:left">Tres jefes, 45 niveles contra reloj que suben de dificultad: 10, 15 y 20 niveles. Enfrenta a las criaturas de cada jefe y toma decisiones que cambian la historia.</p><h2>Tu nombre</h2><input id=nm maxlength=14 placeholder="Escribe tu nombre" value="${esc(NM)}" oninput="NM=this.value"><h2>Tu habilidad</h2><div class=row>${CH.map((c,i)=>`<button class="card ${i==S.ch?'on':''}" ${un.includes(i)?`onclick="S.ch=${i};career()"`:'disabled style="opacity:.4"'}>${pt(c.id,64)}<span>${c.a}</span><small>${c.d}</small></button>`).join('')}</div><h2>Dificultad</h2><div class=row>${Object.keys(DF).map(k=>`<button class="${k==S.df?'on':''}" onclick="S.df='${k}';career()">${k}</button>`).join('')}</div><button class=go onclick="cnew()">Comenzar aventura</button>`}
 const lj=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:(a[0]||'');
 const hn=()=>LORE[CH[(K.ch+1)%6].id].h;
 const ALY={
@@ -358,9 +362,9 @@ vorn:{n:'Vorn',e:'⚔️',d:'+1 ❤️ contra jefes',l:['Vorn camina como una mu
 hero:{n:'Compañero',e:'🦸',d:'+1 ❤️ cada 3 niveles',l:['{h} sonríe: «Seguimos juntos».','{h} recuerda sus días en la jaula y se ríe de ello.','{h} te pasa agua: «Bebe, que la aventura es larga».']}};
 const an=id=>id=='hero'?hn():ALY[id].n;
 const fm=(s,c)=>String(s).split('{n}').join(K.name).split('{h}').join(hn()).split('{b}').join(BN[c==null?K.c:c]).split(' de el ').join(' del ');
-const st=()=>{kn();const z=K.lz;return (z>=3?'☀️ Camino de la luz':z<=-3?'🌑 Camino de la sombra':'⚖️ Camino incierto')+(K.al.length?' · 🤝 '+lj(K.al.map(an)):'')};
-function cnew(){const n=esc((NM||'').trim().slice(0,14)||'Viajero'),c=CH[S.ch];K={on:1,name:n,ch:S.ch,df:S.df,c:0,i:0,f:{},al:[],lz:0,sn:{},nx:{},bx:{}};ks();sc('📜 Tu llamada',[c.e+' <b>'+n+'</b>, portador del <b>'+c.a+'</b>.',HI[c.id],'Aurora te espera. Tres guardianes custodian el Abismo: Vorn, Morwen y el Rey Sin Rostro. Cada uno te enviará criaturas, y lo que decidas por el camino cambiará el destino de Aurora.'],'Entrar al Abismo','brief()',pt(c.id,120))}
-function map(){kn();if(K.pd)return scene();const P=CP[K.c];if(K.done)return sc('🏆 Carrera completada',['Final: <b>'+(EN[K.end]?EN[K.end].t:'Aurora es libre')+'</b>','Derrotaste a los tres jefes y decidiste el destino de Aurora.','~'+st()],'🔁 Nueva carrera','cr()');sc('🗡️ Tu carrera',['~'+esc(K.name)+' · '+CH[K.ch].e+' '+CH[K.ch].a+' · '+K.df,'~<b>'+P.t+'</b><br>Nivel '+(K.i+1)+' de '+P.L+(K.i==P.L-1?' · 👑 '+P.b:''),'~'+st()],'▶ Continuar','brief()');$('#app').innerHTML+='<button onclick="cr()" style="width:100%;margin-top:8px">🔁 Nueva carrera</button>'}
+const st=()=>{kn();const z=K.lz;return '💖 '+K.v+' · '+(z>=3?'☀️ Camino de la luz':z<=-3?'🌑 Camino de la sombra':'⚖️ Camino incierto')+(K.al.length?' · 🤝 '+lj(K.al.map(an)):'')};
+function cnew(){const n=esc((NM||'').trim().slice(0,14)||'Viajero'),c=CH[S.ch];K={on:1,name:n,ch:S.ch,df:S.df,v:{'Fácil':7,'Medio':5,'Difícil':3}[S.df],w:0,c:0,i:0,f:{},al:[],lz:0,sn:{},nx:{},bx:{}};ks();sc('📜 Tu llamada',[c.e+' <b>'+n+'</b>, portador del <b>'+c.a+'</b>.',HI[c.id],'Aurora te espera. Tres guardianes custodian el Abismo: Vorn, Morwen y el Rey Sin Rostro. Cada uno te enviará criaturas, y lo que decidas por el camino cambiará el destino de Aurora.'],'Entrar al Abismo','brief()',pt(c.id,120))}
+function map(){kn();if(K.dead)return carOver();if(K.pd)return scene();const P=CP[K.c];if(K.done)return sc('🏆 Carrera completada',['Final: <b>'+(EN[K.end]?EN[K.end].t:'Aurora es libre')+'</b>','Derrotaste a los tres jefes y decidiste el destino de Aurora.','~'+st()],'🔁 Nueva carrera','cr()');sc('🗡️ Tu carrera',['~'+esc(K.name)+' · '+CH[K.ch].e+' '+CH[K.ch].a+' · '+K.df,'~<b>'+P.t+'</b><br>Nivel '+(K.i+1)+' de '+P.L+(K.i==P.L-1?' · 👑 '+P.b:''),'~'+st()],'▶ Continuar','brief()');$('#app').innerHTML+='<button onclick="cr()" style="width:100%;margin-top:8px">🔁 Nueva carrera</button>'}
 function cr(){if(confirm('¿Empezar una carrera nueva? Perderás tu progreso.')){K={};ks();try{localStorage.removeItem('save_game')}catch(_){}career()}}
 function lvCfg(){const c=K.c,P=CP[c],t=K.i/(P.L-1),b=K.i==P.L-1,d=Object.keys(DF).indexOf(K.df),w=Math.min(10,Math.round(7+c+t*1.5)),h=Math.min(15,Math.round(9+c*1.5+t*2.5)+(b?1:0)),dn=(.11+c*.03+t*.05+(b?.02:0))*[.85,1,1.12][d];kn();
 let m=w*h*dn,l=[3,2,1][d]+(b?1:0),tm=(w*h*.8+25)*(1-.15*t-.03*c)*[c==0?1.6:1.4,1,.85][d]*(b?1.15:1);
@@ -376,22 +380,24 @@ else ps.push(BT[K.c][K.i-1]);
 if(K.i>0&&!b&&al.length&&(K.i+K.c)%2==1){const a=al[(K.i*3+K.c)%al.length];ps.push(ALY[a].l[(K.i+K.c)%3].replace('{h}',hn()))}
 if(Z)ps.push(Z.e+' '+Z.w[(K.c+K.i)%3]+' '+['Lo manda '+BN[K.c]+'.','Lo envía '+BN[K.c]+'.','Viene de parte '+dB(K.c)+'.'][K.i%3]);
 else ps.push('🎯 ¡Derrota al jefe antes de que se acabe el tiempo!');
-ps.push('~⏱️ '+L.t+'s · 📐 '+L.w+'×'+L.h+' · 💣 '+L.m+' · ❤️ '+L.l);
+ps.push('~⏱️ '+L.t+'s · 📐 '+L.w+'×'+L.h+' · 💣 '+L.m+' · ❤️ '+L.l);ps.push('~💖 Vidas de aventura: '+K.v+'. Fallar un nivel cuesta 1; ganas 1 cada 3 niveles y 2 al vencer a un jefe. Si llegan a 0, empiezas de cero.');
 if(Z&&Z.tr)ps.push('~'+Z.e+' '+Z.n+': '+Z.tr);
 if(al.length)ps.push('~🤝 '+al.map(a=>an(a)+' ('+ALY[a].d+')').join(' · '));
 sc(P.t+' · Nivel '+(K.i+1)+'/'+P.L,ps,'⚔️ ¡Jugar!','startLv()',b||K.i==0?bpt(K.c):Z?cpt(z,110):'')}
 function startLv(){say();kn();S.ch=K.ch;S.df=K.df;const L=lvCfg(),P=CP[K.c],b=K.i==P.L-1,z=ck(K.c,K.i),Z=z&&CRE[z],sm=S.mode,A=K.al,x=K.nx;S.mode='normal';start();S.mode=sm;
-Object.assign(G,{kc:K.c,ki:K.i,et:'',mode:'car',w:L.w,h:L.h,m:L.m,lives:L.l,tl:L.t,need:8,bs:-1,ez:b?'B'+K.c:z,lab:'🗡️ '+(K.c+1)+'-'+(K.i+1)+(b?' 👑':Z?' '+Z.e:''),msg:b?'👑 ¡Duelo contra '+P.b+'!':Z?Z.e+' ¡Un '+Z.n.toLowerCase()+'! ⏱️ ¡Rápido!':'⏱️ ¡Rápido!'});
+Object.assign(G,{kc:K.c,ki:K.i,et:'',mode:'car',w:L.w,h:L.h,m:L.m,lives:L.l,tl:L.t,need:8,bs:-1,ez:b?'B'+K.c:z,lab:'🗡️ '+(K.c+1)+'-'+(K.i+1)+(b?' 👑':Z?' '+Z.e:'')+' · 💖'+K.v,msg:b?'👑 ¡Duelo contra '+P.b+'!':Z?Z.e+' ¡Un '+Z.n.toLowerCase()+'! ⏱️ ¡Rápido!':'⏱️ ¡Rápido!'});
 tnt('intro');G.hint+=(x.h||0)+(A.includes('ilse')?1:0);G.det+=(x.d||0)+(A.includes('pip')?1:0);
 G.g=[];for(let y=0;y<G.h;y++){G.g[y]=[];for(let x=0;x<G.w;x++)G.g[y][x]={m:0,r:0,f:0,n:0,x:0,d:0}}draw();battleFx(z,b)}
 function battleFx(z,b){const o=document.createElement('div'),P=CP[K.c];o.className='bt';
 o.innerHTML='<div class=bt-t>'+(b?'👑 ¡DUELO CONTRA EL JEFE!':'⚔️ ¡BATALLA!')+'</div><div class=bt-r><div class=bt-h>'+pt(CH[K.ch].id,130)+'<b>'+K.name+'</b></div><div class=bt-v>VS</div><div class=bt-e>'+(b?bpt(K.c,130):cpt(z,130))+'<b>'+(b?P.b:CRE[z].n)+'</b></div></div><div class=bt-s>Toca para empezar</div>';
 o.onclick=()=>o.remove();document.body.appendChild(o);setTimeout(()=>o.remove(),2600);sfx('battle');
 const a=$('#app');a.classList.remove('shk');void a.offsetWidth;a.classList.add('shk');try{navigator.vibrate&&navigator.vibrate([40,30,90])}catch(_){}}
-function carEnd(){const win=G.over==1,P=CP[K.c],b=K.i==P.L-1;let c=0;
-if(win){c=b?100:8+K.c*4;const m=meta();m.coins+=c;saveMeta(m);G.bs=b?K.c:-1;kn();const z=ck(K.c,K.i);K.pd={c:K.c,i:K.i};if(!MJ[K.c+'-'+K.i]&&z){K.pd.v=(K.sn[z]||0)%4;K.sn[z]=(K.sn[z]||0)+1}K.nx={};if(b)K.bx={};if(b){if(K.c<2){K.c++;K.i=0}}else K.i++;ks();sfx('win');if(b)winFx();else fx('✅','#2ecc71')}
-else sfx('lose');
-tnt(win?'win':'lose');G.msg=win?'✅ ¡Nivel superado! +'+c+' 🪙':G.lives>0?'⏰ Se acabó el tiempo':'💀 Sin vidas'}
+function carEnd(){const win=G.over==1,P=CP[K.c],b=K.i==P.L-1;let c=0,gv=0;
+if(win){c=b?100:8+K.c*4;const m=meta();m.coins+=c;saveMeta(m);G.bs=b?K.c:-1;kn();K.w=(K.w||0)+1;gv=b?2:(K.w%3==0?1:0);if(gv)K.v=Math.min(9,K.v+gv);const z=ck(K.c,K.i);K.pd={c:K.c,i:K.i};if(!MJ[K.c+'-'+K.i]&&z){K.pd.v=(K.sn[z]||0)%4;K.sn[z]=(K.sn[z]||0)+1}K.nx={};if(b)K.bx={};if(b){if(K.c<2){K.c++;K.i=0}}else K.i++;ks();sfx('win');if(b)winFx();else fx('✅','#2ecc71')}
+else{kn();K.v=Math.max(0,K.v-1);if(K.v<=0)K.dead=1;ks();sfx('lose')}
+tnt(win?'win':'lose');G.msg=win?'✅ ¡Nivel superado! +'+c+' 🪙'+(gv?' · 💖 +'+gv:''):(G.lives>0?'⏰ Se acabó el tiempo':'💀 Sin vidas')+' · 💖 '+K.v+(K.v<=0?' · fin de la aventura':'')}
+function carOver(){kn();sc('💀 La aventura ha terminado',['Te quedaste sin vidas de aventura, '+K.name+'. El Abismo se traga tu expedición… pero Aurora aún espera.','~Llegaste al capítulo '+(K.c+1)+', nivel '+(K.i+1)+'. Conservas tus 🪙 y tus héroes desbloqueados.'],'🔁 Empezar de cero','carReset()',pt(CH[K.ch].id,100))}
+function carReset(){K={};ks();try{localStorage.removeItem('save_game')}catch(_){}career()}
 function carNext(){if(G.bs<0)return scene();const P=CP[G.bs];sc(P.be+' '+P.b+' derrotado',[P.o],'▶ Continuar','scene()',bpt(G.bs))}
 /* ===== HISTORIA, CRIATURAS Y DECISIONES ===== */
 const BN=['Vorn','Morwen','el Rey Sin Rostro'],dB=c=>c==2?'del Rey Sin Rostro':'de '+BN[c];
@@ -547,8 +553,8 @@ const MD={plain:'Buscaminas clásico: 1 vida, sin ayudas.',normal:'Héroes, habi
 function home(){svg();say();const c=CH[S.ch],m=meta();$('#app').innerHTML=`<div class=hm><div class=hm-l><h1 class=hm-t>💣 BuscaMinas<br><span>Héroes del Abismo</span></h1><div class=hm-p onclick="heroes()">${pt(c.id,110)}</div><p class=hm-i>${c.n}<br>🪙 ${m.coins} · 🎖️ ${Object.keys(m.ach).length}/${ACH.length}</p></div><div class=hm-r><button class=go onclick="play()">▶ Jugar</button><button class="go car" id=cb onclick="cont()">🗡️ Modo Carrera${carLbl()}</button><div class=hm-g><button onclick="heroes()">🦸<small>Personajes</small></button><button onclick="rs()">🏆<small>Récords</small></button><button onclick="more()">⚙️<small>Más</small></button></div></div></div>`;bindLp()}
 function more(){svg();say();$('#app').innerHTML=`<div class="hm mo"><div class=hm-l><h1 class=hm-t>⚙️ Más<br><span>opciones</span></h1><button onclick="home()">← Inicio</button><p class=hint id=ms>${AS}</p><p class=hint>Mantén pulsado 🗡️ Carrera en el inicio para reiniciar tu progreso.</p></div><div class=hm-r><div class="hm-g g4"><button onclick="lore()">📜<small>Historia</small></button><button onclick="tuto()">📖<small>Tutorial</small></button><button onclick="themes()">🎨<small>Temas</small></button><button onclick="mh2()">${M?'🔇':'🔊'}<small>Efectos</small></button><button id=bm onclick="mz()">🎵<small>Música</small></button><button id=bv onclick="vz()">🗣️<small>Voz</small></button><button class=yt onclick="ytScreen()">▶️<small>YT Music${YA?' · on':''}</small></button></div></div></div>`;tgs()}
 function mh2(){M=M?0:1;try{localStorage.setItem('mute',M)}catch(_){}more()}
-function carLbl(){if(!K||!K.on)return'';kn();const t=K.done?'🏆 Carrera completada':'Cap. '+(K.c+1)+' · Nivel '+(K.i+1)+'/'+CP[K.c].L;return '<br><small style="font-weight:400;opacity:.85">'+t+'</small>'}
-function cont(){if(!K.on)return career();kn();if(K.done||K.pd)return map();let sg=null;try{sg=JSON.parse(localStorage.getItem('save_game'))}catch(_){}
+function carLbl(){if(!K||!K.on)return'';kn();const t=K.dead?'💀 Aventura perdida':K.done?'🏆 Carrera completada':'Cap. '+(K.c+1)+' · Nivel '+(K.i+1)+'/'+CP[K.c].L+' · 💖 '+K.v;return '<br><small style="font-weight:400;opacity:.85">'+t+'</small>'}
+function cont(){if(!K.on)return career();kn();if(K.dead)return carOver();if(K.done||K.pd)return map();let sg=null;try{sg=JSON.parse(localStorage.getItem('save_game'))}catch(_){}
 if(sg&&sg.mode=='car'&&!sg.over&&!sg.first&&sg.kc===K.c&&sg.ki===K.i){S.ch=K.ch;S.df=K.df;const n=Date.now();if(sg.ph){sg.t0+=n-sg.ph;sg.ph=0}else if(sg.sv&&sg.t0)sg.t0+=n-sg.sv;sg.map=new Map();sg.an={};sg.et='';G=sg;say();draw();return}
 brief()}
 function bindLp(){const b=$('#cb');if(!b)return;let t,f=0;b.addEventListener('pointerdown',()=>{f=0;if(!K.on)return;t=setTimeout(()=>{f=1;if(confirm('¿Seguro que quieres reiniciar el Modo Carrera? Se borrará todo tu progreso.')){K={};ks();try{localStorage.removeItem('save_game')}catch(_){}home()}},700)});['pointerup','pointerleave','pointercancel'].forEach(e=>b.addEventListener(e,()=>clearTimeout(t)));b.addEventListener('click',e=>{if(f){e.stopImmediatePropagation();e.preventDefault();f=0}},true)}
@@ -595,7 +601,7 @@ function ytDel(){Y.q=[];Y.p='';ys();if(YA)ytStop();else ytScreen()}
 function ytScreen(){const src=Y.p?'📃 Lista de reproducción cargada':Y.q.length?'🎶 '+Y.q.length+' canción(es) en cola':'Nada cargado';
 $('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🎵 YT Music</h1><p class=hint style="text-align:left;margin:0 0 8px">Pega un enlace de YouTube o YouTube Music (canción, lista o mezcla). Necesita internet. Si algún video no permite incrustarse, se salta. El reproductor pequeño de abajo debe quedar visible.</p><input id=yu type=url inputmode=url autocomplete=off placeholder="https://music.youtube.com/watch?v=…"><div class=row style="margin-top:8px"><button class=go style="flex:2;margin:0" onclick="ytGo()">▶ Reproducir</button><button style="flex:1" onclick="ytAdd()">➕ Cola</button></div><p class=msg id=yn style="margin-top:10px">&nbsp;</p><div class=row><button style="flex:1" onclick="ytPrev()">⏮</button><button id=ypp style="flex:1" onclick="ytTog()">▶</button><button style="flex:1" onclick="ytNext()">⏭</button></div><div class=row style="margin-top:8px"><button class="${Y.sh?'on':''}" style="flex:1" onclick="Y.sh^=1;ys();ytSh();ytScreen()">🔀 Aleatorio</button><button class="${Y.rp?'on':''}" style="flex:1" onclick="Y.rp^=1;ys();ytRp();ytScreen()">🔁 Repetir</button></div><h2>Volumen</h2><input type=range id=yv min=0 max=100 value=${Y.vol} style="padding:0;border:0" oninput="ytVol(this.value)"><h2>Fuente</h2><p class=hint style="text-align:left">${src}</p><div class=row><button style="flex:1" onclick="ytDel()">🗑️ Vaciar</button><button style="flex:1" onclick="ytStop()">⏹ Volver a la música de taberna</button></div>`;ytUI()}
 function mh(){M=M?0:1;try{localStorage.setItem('mute',M)}catch(_){}home()}
-function play(){$('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🎮 Jugar</h1><h2>Modo</h2><div class=row>${[['plain','🧩 Normal'],['normal','🎯 Clásico'],['inf','♾️ Infinito'],['hard','💀 Hardcore'],['daily','📅 Del día'],['time','⏱️ Contrarreloj']].map(m=>`<button class="${m[0]==S.mode?'on':''}" onclick="S.mode='${m[0]}';play()">${m[1]}</button>`).join('')}</div><p class=hint style="text-align:left">${MD[S.mode]}</p><h2>Dificultad</h2><div class=row>${Object.keys(DF).map(k=>`<button class="${k==S.df?'on':''}" onclick="S.df='${k}';play()">${k}</button>`).join('')}</div><h2>Personaje</h2><button onclick="heroes()" style="width:100%;display:flex;align-items:center;gap:10px;text-align:left">${pt(CH[S.ch].id,48)}<span><b>${CH[S.ch].n}</b><br><small style="color:var(--mut)">${CH[S.ch].a}: ${CH[S.ch].d}</small></span></button><button class=go onclick="start()">Jugar</button>`}
+function play(){$('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🎮 Jugar</h1><h2>Modo</h2><div class=row>${[['plain','🧩 Normal'],['normal','🎯 Clásico'],['inf','♾️ Infinito'],['hard','💀 Hardcore'],['daily','📅 Del día'],['time','⏱️ Contrarreloj'],['cube','🧊 Cubo 3D']].map(m=>`<button class="${m[0]==S.mode?'on':''}" onclick="${m[0]=='cube'?'cube()':`S.mode='${m[0]}';play()`}">${m[1]}</button>`).join('')}</div><p class=hint style="text-align:left">${MD[S.mode]}</p><h2>Dificultad</h2><div class=row>${Object.keys(DF).map(k=>`<button class="${k==S.df?'on':''}" onclick="S.df='${k}';play()">${k}</button>`).join('')}</div><h2>Personaje</h2><button onclick="heroes()" style="width:100%;display:flex;align-items:center;gap:10px;text-align:left">${pt(CH[S.ch].id,48)}<span><b>${CH[S.ch].n}</b><br><small style="color:var(--mut)">${CH[S.ch].a}: ${CH[S.ch].d}</small></span></button><button class=go onclick="start()">Jugar</button>`}
 function heroes(){const m=meta(),c=CH[S.ch];$('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🦸 Personajes</h1><div class=row>${CH.map((h,i)=>`<button class="card ${i==S.ch?'on':''}" style="flex:1 1 44%;gap:4px" onclick="pick(${i})">${pt(h.id,96)}<b style="font-size:15px">${h.n}</b><small>${h.a}: ${h.d}</small>${m.un.includes(i)||!h.cost?(i==S.ch?'<small>✔ Elegido</small>':''):'<small>🔒 '+h.cost+' 🪙'+(m.coins>=h.cost?' · toca para comprar':'')+'</small>'}</button>`).join('')}</div><p class=hint style="text-align:left;margin-top:12px">${c.e} <b>${c.n}</b>: ${c.s}</p>`}
 function rs(){$('#app').innerHTML='<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🏆 Récords</h1>'+recs()}
 /* ===== VOZ Y MÚSICA ===== */
@@ -628,7 +634,7 @@ let D3=1;try{const v=localStorage.getItem('d3');if(v!==null)D3=+v}catch(_){}
 const T3={r:null,s:null,cam:null,cells:[],w:0,h:0,th:0,ph:.85,zoom:1,cz:1,shake:0,tex:{},run:0,geo:null,cw:0,ch:0,pt:[],end:0,et:0,tf:0,lk:null,pv:null,pn:{x:0,z:0},bc:null,tc:null,hero:null,heroCh:-1,rest:{x:0,y:0,z:0},amb:null,ambTh:'',en:null,ek:'',had:0,dgv:0,dg:null,sc:null,sa:[],scK:'',hs:0,envK:'',floor:null,slab:null,wave:0,rad:10};
 T3.ps=()=>T3.rad*.728/Math.max(1,T3.ch);
 const DK={'🚩':'flag','💣':'mine','🪙':'gold','💎':'gem'};
-const TCAP={neon:['#00f0ff',1,'#00f0ff'],lava:['#ff5a1f',1,'#ff3a00'],oceano:['#7fd3ff',0,''],bosque:['#4caf50',0,''],dulce:['#ff9ccf',0,''],hielo:['#ffffff',0,''],oro:['#f5b301',1,'#f5b301'],sombra:['#b052ff',1,'#7a2cff']};
+const TCAP={neon:['#00f0ff',1,'#00f0ff'],lava:['#ff5a1f',1,'#ff3a00'],oceano:['#7fd3ff',0,''],bosque:['#4caf50',0,''],dulce:['#ff9ccf',0,''],hielo:['#6fb3da',0,''],oro:['#f5b301',1,'#f5b301'],sombra:['#b052ff',1,'#7a2cff']};
 const TAMB={lava:['#ff7a2a','up'],oceano:['#bfeaff','up'],bosque:['#d6ff6b','float'],hielo:['#ffffff','down'],oro:['#ffe27a','up'],sombra:['#b052ff','up'],dulce:['#ffffff','down'],neon:['#00f0ff','float']};
 function t3tex(t,col){const k=t+'|'+col;if(T3.tex[k])return T3.tex[k];const c=document.createElement('canvas');c.width=c.height=96;const g=c.getContext('2d');g.font='bold 68px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle=col||'#222';g.fillText(t,48,52);return T3.tex[k]=new THREE.CanvasTexture(c)}
 function bindPtr(el,st,pick,tap,zr){
@@ -762,7 +768,8 @@ function t3scene(){
   const W=T3.w,H=T3.h,ax=W/2+5,az=H/2+5,PI=Math.PI,R=(a,b)=>a+Math.random()*(b-a);
   const mat=(c,e,o)=>new THREE.MeshPhongMaterial(Object.assign({color:c,emissive:e||'#000000',flatShading:true,shininess:6},o||{}));
   const ob=(geo,c,x,y,z,e,o,par)=>{const m=new THREE.Mesh(geo,mat(c,e,o));m.position.set(x,y,z);(par||g).add(m);return m};
-  const ring=(n,f,j)=>{for(let i=0;i<n;i++){const a=(i+Math.random()*.6)/n*2*PI,q=1+(Math.random()-.5)*(j||.3);f(Math.cos(a)*ax*q,Math.sin(a)*az*q,i,a)}};
+  const clear=i0=>{const k=g.children.slice(i0);if(!k.length)return;const m=1.2;for(let s=0;s<80;s++){const b=new THREE.Box3();k.forEach(o=>b.expandByObject(o));if(b.max.x<-W/2-m||b.min.x>W/2+m||b.max.z<-H/2-m||b.min.z>H/2+m)break;const c=b.getCenter(new THREE.Vector3()),l=Math.hypot(c.x,c.z)||1,dx=c.x/l*.35,dz=c.z/l*.35;k.forEach(o=>{o.position.x+=dx;o.position.z+=dz})}};
+  const ring=(n,f,j)=>{for(let i=0;i<n;i++){const a=(i+Math.random()*.6)/n*2*PI,q=1+(Math.random()-.5)*(j||.3),i0=g.children.length;f(Math.cos(a)*ax*q,Math.sin(a)*az*q,i,a);clear(i0)}};
   const ground=(c,e)=>{const m=ob(new THREE.CircleGeometry(70,40),c,0,-.95,0,e);m.rotation.x=-PI/2;return m};
   const hill=(x,z,c)=>{const s=R(.9,1.6),m=ob(new THREE.SphereGeometry(3*s,10,6),c,x,-.95,z);m.scale.y=.45};
   const pine=(x,z,s)=>{const p=new THREE.Group();p.position.set(x,-.95,z);p.scale.setScalar(s);g.add(p);
@@ -891,7 +898,7 @@ function b3d(){
     const c=T3.cells[i];if(!c)return;
     const o=el.classList.contains('o'),x=el.classList.contains('x'),t=el.textContent.trim(),sp=el.querySelector('span'),ice=t=='🧊'||t=='❄️',dk=DK[t]||'';
     c.x=+el.dataset.x;c.y=+el.dataset.y;c.t=t;
-    c.m.material.color.set(x?'#e5484d':o?cO:ice?(t=='🧊'?'#8fd3ff':'#d6f1ff'):cC);c.m.material.opacity=ice?.72:1;
+    c.m.material.color.set(x?'#e5484d':o?cO:ice?(t=='🧊'?'#8fd3ff':'#d6f1ff'):cC);c.m.material.opacity=ice?.72:1;c.m.material.emissive.set(x?'#a0121a':'#000000');
     if(o&&!c.o&&el.classList.contains('pop')){c.hold=now+(parseFloat(el.style.getPropertyValue('--dl'))||0)*1000;c.pop=.45}else if(!o&&!c.pop)c.hold=0;
     if(x&&!c.xx)newBoom=c;
     if(x)T3.bc=c;
@@ -899,7 +906,7 @@ function b3d(){
     if(dk!=c.dk){t3deco(c,dk);c.dk=dk}
     c.sv=!!t&&!dk&&t!='🧊'?1:0;
     if(c.sv){c.s.material.map=t3tex(t,sp?sp.style.color:'#222');c.s.material.needsUpdate=true}
-    c.cap.visible=!!tc&&!o&&!ice;c.glow=!!(tc&&tc[1]);
+    c.cap.visible=!!tc&&!o&&!ice&&!x;c.glow=!!(tc&&tc[1]);
     if(tc){c.cap.material.color.set(tc[0]);c.cap.material.emissive.set(tc[1]?tc[2]:'#000000');if(!tc[1])c.cap.material.emissiveIntensity=1}
     if(o||dk=='flag')act++;
   });
@@ -928,12 +935,14 @@ const CB={n:4,m:9,c:[],over:0,first:1,op:0,fl:0,L:3,mode:0,th:.7,ph:.9,zoom:1,r:
 function cube(n){
   if(!window.THREE){toast('El modo Cubo necesita internet la primera vez (three.js)');return}
   if(n)CB.n=n;CB.m={3:3,4:9,5:18}[CB.n];
-  $('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🧊 Cubo 3D</h1><div class=row>${[3,4,5].map(k=>`<button class="${k==CB.n?'on':''}" onclick="cube(${k})">${k}×${k}×${k}</button>`).join('')}</div><div class=hud style="margin-top:8px"><span id=cbm>💣 ${CB.m}</span><span id=cbs style="font-weight:700;font-size:15px">&nbsp;</span><button id=cbt onclick="CB.mode^=1;cbvis()">⛏️ Abrir</button></div><div id=cbw></div><div class=bar><button onclick="CB.L=Math.max(0,CB.L-1);cbvis()">▼ Bajar</button><button id=cbl style="flex:0 0 auto">Capa</button><button onclick="CB.L=Math.min(CB.n-1,CB.L+1);cbvis()">▲ Subir</button><button onclick="cube()">↻ Nuevo</button></div><p class=hint>Minas ocultas dentro del cubo. Cada número cuenta las minas entre sus 26 vecinos (incluye diagonales y otras capas). Baja capas para llegar al interior · mantén pulsado para bandera · arrastra para girar · pellizca para zoom.</p>`;
-  cbnew();
+  $('#app').innerHTML=`<button onclick="home()" style="margin-bottom:8px">← Inicio</button><h1>🧊 Cubo 3D</h1><div class=row>${[3,4,5].map(k=>`<button class="${k==CB.n?'on':''}" onclick="cube(${k})">${k}×${k}×${k}</button>`).join('')}</div><div class=hud style="margin-top:8px"><span id=cbm>💣 ${CB.m}</span><span id=cbs style="font-weight:700;font-size:14px;flex:1;text-align:center">&nbsp;</span><button onclick="cbhelp()">❓</button><button id=cbt onclick="CB.mode^=1;cbvis()">⛏️ Abrir</button></div><div id=cbw><div id=cbhelp><h3>🧊 Cómo se juega</h3><p><b>Objetivo:</b> dentro del cubo hay 💣 minas escondidas. Abre todos los cubos que NO tienen mina.</p><p><b>Los números:</b> cada número dice cuántas minas tocan ese cubo, contando sus 26 vecinos (arriba, abajo, lados y diagonales, también de otras capas).</p><p><b>Las capas:</b> solo ves el cubo hasta la capa activa (la más brillante). Usa <b>▼ Bajar</b> para quitar capas y llegar al interior, y <b>▲ Subir</b> para volver.</p><p><b>Abrir y marcar:</b> toca un cubo para abrirlo. Mantén pulsado, o cambia el botón ⛏️ a 🚩, para poner bandera donde creas que hay mina.</p><p><b>Vista:</b> arrastra para girar el cubo y pellizca para acercar. Tu primer toque siempre es seguro. Tienes 2 🔍 pistas que abren un cubo seguro.</p><button class=go onclick="cbhelp(0)">¡Entendido!</button></div></div><div class=bar><button onclick="CB.L=Math.max(0,CB.L-1);cbvis()">▼ Bajar</button><button id=cbl style="flex:0 0 auto">Capa</button><button onclick="CB.L=Math.min(CB.n-1,CB.L+1);cbvis()">▲ Subir</button><button id=cbh2 onclick="cbhint()">🔍 2</button><button onclick="cube()">↻ Nuevo</button></div><p class=hint>Toca para abrir · mantén pulsado para bandera · ▼ Bajar para ver el interior · ❓ ayuda</p>`;
+  cbnew();try{if(!localStorage.getItem('cbh'))cbhelp(1)}catch(_){}
 }
+function cbhelp(v){const e=$('#cbhelp');if(!e)return;const on=v===undefined?!e.classList.contains('on'):!!v;e.classList.toggle('on',on);if(!on)try{localStorage.setItem('cbh',1)}catch(_){}}
+function cbhint(){if(CB.over)return;if(CB.first){toast('Abre primero un cubo');return}if(CB.H<1){toast('Ya no te quedan pistas');return}const l=CB.c.filter(c=>!c.o&&!c.mine&&!c.f);if(!l.length)return;const c=l[Math.random()*l.length|0],m=CB.mode;CB.mode=0;CB.H--;CB.L=Math.max(CB.L,c.y);cbtap(c,0);CB.mode=m;cbvis()}
 function cbnew(){
   const n=CB.n;CB.c=Array.from({length:n*n*n},(_,i)=>({i,x:i%n,y:(i/n|0)%n,z:(i/(n*n))|0,mine:0,nn:0,o:0,f:0}));
-  CB.over=0;CB.first=1;CB.op=0;CB.fl=0;CB.L=n-1;CB.mode=0;CB.spin=0;CB.th=.7;CB.ph=.9;CB.zoom=1;
+  CB.over=0;CB.first=1;CB.op=0;CB.fl=0;CB.H=2;CB.L=n-1;CB.mode=0;CB.spin=0;CB.th=.7;CB.ph=.9;CB.zoom=1;
   if(!CB.r){const r=CB.r=new THREE.WebGLRenderer({antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));CB.cam=new THREE.PerspectiveCamera(40,1,.1,100);
     const el=r.domElement,ray=new THREE.Raycaster();
     const pick=(x,y)=>{const b=el.getBoundingClientRect();ray.setFromCamera({x:(x-b.left)/b.width*2-1,y:-((y-b.top)/b.height)*2+1},CB.cam);const h=ray.intersectObjects(CB.c.filter(c=>c.m.visible&&!c.o).map(c=>c.m))[0];return h?CB.c[h.object.userData.i]:null};
@@ -945,7 +954,7 @@ function cbnew(){
     c.s=new THREE.Sprite(new THREE.SpriteMaterial({transparent:true,depthTest:false}));c.s.renderOrder=10;c.s.scale.set(.75,.75,.75);c.s.position.copy(c.m.position);c.s.visible=false;CB.s.add(c.m);CB.s.add(c.s)});
   $('#cbw').appendChild(CB.r.domElement);
   if(!CB.run){CB.run=1;requestAnimationFrame(cbloop)}
-  cbvis();cbmsg('');
+  cbvis();
 }
 function cbmsg(t){const e=$('#cbs');if(e)e.innerHTML=t||'&nbsp;'}
 function cbnb(c){const n=CB.n,r=[];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)for(let d=-1;d<=1;d++){if(!a&&!b&&!d)continue;const x=c.x+a,y=c.y+b,z=c.z+d;if(x>=0&&x<n&&y>=0&&y<n&&z>=0&&z<n)r.push(CB.c[x+n*(y+n*z)])}return r}
@@ -956,9 +965,9 @@ function cbtap(c,lp){
   if(CB.first){CB.first=0;let ban=new Set([c,...cbnb(c)]);if(CB.c.length-ban.size<CB.m)ban=new Set([c]);
     let k=0;while(k<CB.m){const q=CB.c[Math.random()*CB.c.length|0];if(q.mine||ban.has(q))continue;q.mine=1;k++}
     CB.c.forEach(q=>q.nn=cbnb(q).filter(z=>z.mine).length)}
-  if(c.mine){CB.over=-1;CB.L=CB.n-1;CB.shake=1;c.o=1;cbmsg('💥 ¡Boom!');cbvis();c.m.material.color.set('#e5484d');c.m.visible=true;return}
+  if(c.mine){CB.over=-1;CB.L=CB.n-1;CB.shake=1;c.o=1;cbmsg('💥 ¡Boom! Toca ↻ Nuevo');cbvis();c.m.material.color.set('#e5484d');c.m.visible=true;return}
   const st=[c];while(st.length){const k=st.pop();if(k.o||k.f)continue;k.o=1;CB.op++;if(!k.nn)cbnb(k).forEach(q=>st.push(q))}
-  if(CB.op==CB.c.length-CB.m){CB.over=1;CB.spin=1;CB.c.forEach(q=>{if(q.mine&&!q.f){q.f=1;CB.fl++}});cbmsg('🏆 ¡Cubo limpio!')}
+  if(CB.op==CB.c.length-CB.m){CB.over=1;CB.spin=1;CB.c.forEach(q=>{if(q.mine&&!q.f){q.f=1;CB.fl++}});cbmsg('🏆 ¡Cubo limpio! Toca ↻ Nuevo')}
   cbvis();
 }
 function cbvis(){
@@ -966,13 +975,15 @@ function cbvis(){
   CB.c.forEach(c=>{
     const vis=c.y<=CB.L,boom=CB.over<0&&c.mine&&c.o;
     c.m.visible=vis&&!(c.o&&!c.nn&&!c.mine);
-    c.m.material.opacity=c.o?.12:.88;
-    if(boom)c.m.material.color.set('#e5484d');else if(c.f&&!c.o)c.m.material.color.set('#ff8a8a');else c.m.material.color.setHSL(.55+.4*c.y/Math.max(1,n-1),.55,.58);
+    c.m.material.opacity=c.o?.12:(c.y==CB.L?.95:.55);
+    if(boom)c.m.material.color.set('#e5484d');else if(c.f&&!c.o)c.m.material.color.set('#ff8a8a');else c.m.material.color.setHSL(.55+.4*c.y/Math.max(1,n-1),.55,c.y==CB.L?.7:.42);
     let t='',col='#222';
     if(c.o&&c.nn&&!c.mine){t=''+c.nn;col=COL[Math.min(c.nn,8)]}else if(c.f&&!c.o)t='🚩';else if(CB.over<0&&c.mine)t='💣';
     c.s.visible=vis&&!!t;if(t){c.s.material.map=t3tex(t,col);c.s.material.needsUpdate=true}
   });
-  const l=$('#cbl');if(l)l.textContent='Capa '+(CB.L+1)+'/'+n;
+  if(!CB.over)cbmsg(CB.first?'👆 Toca un cubo para empezar':'Faltan '+(CB.c.length-CB.m-CB.op)+' cubos seguros');
+  const hb=$('#cbh2');if(hb)hb.textContent='🔍 '+CB.H;
+  const l=$('#cbl');if(l)l.textContent='Capa '+(n-CB.L)+'/'+n;
   const m=$('#cbm');if(m)m.textContent='💣 '+(CB.m-CB.fl);
   const b=$('#cbt');if(b){b.textContent=CB.mode?'🚩 Bandera':'⛏️ Abrir';b.classList.toggle('on',!!CB.mode)}
 }
@@ -986,7 +997,6 @@ function cbloop(){
   CB.cam.position.set(rad*Math.sin(CB.ph)*Math.sin(CB.th)+k,rad*Math.cos(CB.ph)+k,rad*Math.sin(CB.ph)*Math.cos(CB.th));CB.cam.lookAt(0,0,0);
   CB.r.render(CB.s,CB.cam);
 }
-{const _p=play;play=function(){_p.apply(this,arguments);$('#app').insertAdjacentHTML('beforeend','<button style="width:100%;margin-top:10px" onclick="cube()">🧊 Cubo 3D · modo nuevo</button>')}}
 /* ===== FONDO 3D DEL MENÚ E INTRO ===== */
 const HB={on:0,r:null,s:null,cam:null,run:0,N:11,cells:[],th:0,k:['#cfc8b8','#ece7da','#1a1b1f'],key:'',f:0,t0:0,cl:0,fail:0,slab:null};
 function hbCol(){const cs=getComputedStyle(document.documentElement),g=n=>cs.getPropertyValue(n).trim();return[g('--cell')||'#cfc8b8',g('--open')||'#ece7da',g('--bg')||'#1a1b1f']}
