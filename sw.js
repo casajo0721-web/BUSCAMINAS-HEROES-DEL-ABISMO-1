@@ -82,6 +82,6 @@ self.addEventListener('fetch',e=>{
   if(u.href===LIB||(u.hostname==='cdnjs.cloudflare.com'&&u.pathname.endsWith('three.min.js'))){e.respondWith(libreria(e,q));return}
   if(u.origin!==self.location.origin)return;
   if(q.headers.has('range'))return;
-  if(u.pathname.endsWith('/musica.mp3')){e.respondWith(musica(e,q));return}
+  if(u.pathname.endsWith('/musica.mp3')||u.pathname.endsWith('/coin.mp3')){e.respondWith(musica(e,q));return}
   e.respondWith(redPrimero(e,q));
 });
